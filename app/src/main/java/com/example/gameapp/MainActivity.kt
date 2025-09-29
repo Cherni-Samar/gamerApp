@@ -4,14 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.example.gameapp.ui.theme.GameAppTheme
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,31 +20,34 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GameAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-                LoginScreen()
+                var showSplash by remember { mutableStateOf(true) }
 
+                if (showSplash) {
+                    SplashScreen { showSplash = false }
+                } else {
+                    LoginScreen() // ton écran de login
+                }
             }
         }
     }
 }
 
+// SplashScreen composable
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun SplashScreen(onTimeout: () -> Unit) {
+    LaunchedEffect(Unit) {
+        delay(2000L) // 2 secondes
+        onTimeout()      // après le délai, passe au LoginScreen
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GameAppTheme {
-        Greeting("Android")
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "Logo Splash",
+            modifier = Modifier.size(150.dp)
+        )
     }
 }

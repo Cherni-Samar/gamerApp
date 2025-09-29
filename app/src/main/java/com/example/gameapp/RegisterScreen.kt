@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,12 +24,18 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun LoginScreen() {
+fun RegisterScreen(
+    onLoginClick: () -> Unit = {}
+) {
+    var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    var fullNameError by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
-    var rememberMe by remember { mutableStateOf(false) }
+    var confirmPasswordError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -45,14 +53,40 @@ fun LoginScreen() {
                 .padding(bottom = 48.dp)
         )
 
-        // Champ Email avec icône
+        // Champ Full Name
+        OutlinedTextField(
+            value = fullName,
+            onValueChange = {
+                fullName = it
+                fullNameError = it.isEmpty()
+            },
+            label = { Text("FullName") },
+            singleLine = true,
+            leadingIcon = {
+                Icon(Icons.Default.Person, contentDescription = "Full Name")
+            },
+            isError = fullNameError,
+            supportingText = {
+                if (fullNameError) {
+                    Text(
+                        text = "Must not be empty!",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Champ Email
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
                 emailError = it.isEmpty()
             },
-            label = { Text("Mail") },
+            label = { Text("Email") },
             singleLine = true,
             leadingIcon = {
                 Icon(Icons.Default.Email, contentDescription = "Email")
@@ -61,7 +95,7 @@ fun LoginScreen() {
             supportingText = {
                 if (emailError) {
                     Text(
-                        text = "Mail not be empty!",
+                        text = "Must not be empty!",
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -70,9 +104,9 @@ fun LoginScreen() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Champ Password avec icône
+        // Champ Password
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -90,7 +124,7 @@ fun LoginScreen() {
             supportingText = {
                 if (passwordError) {
                     Text(
-                        text = "Mail not be empty!",
+                        text = "Must not be empty!",
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -100,45 +134,45 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Ligne Remember Me et Forget Password
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Remember Me avec Checkbox
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = rememberMe,
-                    onCheckedChange = { rememberMe = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colorScheme.primary
+        // Champ Confirm Password
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+                confirmPasswordError = it.isEmpty() || it != password
+            },
+            label = { Text("Confirm Password") },
+            singleLine = true,
+            leadingIcon = {
+                Icon(Icons.Default.Lock, contentDescription = "Confirm Password")
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            isError = confirmPasswordError,
+            supportingText = {
+                if (confirmPasswordError) {
+                    Text(
+                        text = if (confirmPassword.isEmpty()) "Must not be empty!" else "Passwords don't match!",
+                        color = MaterialTheme.colorScheme.error
                     )
-                )
-                Text(
-                    text = "Remember Me",
-                    fontSize = 14.sp
-                )
-            }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            // Forget Password
-            TextButton(onClick = { /* TODO: Navigate to forget password */ }) {
-                Text(
-                    text = "Forget password ?",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+        Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Bouton Login
+        // Bouton Submit
         Button(
             onClick = {
+                fullNameError = fullName.isEmpty()
                 emailError = email.isEmpty()
                 passwordError = password.isEmpty()
-                // TODO: Authentication logic
+                confirmPasswordError = confirmPassword.isEmpty() || confirmPassword != password
+
+                if (!fullNameError && !emailError && !passwordError && !confirmPasswordError) {
+                    // TODO: Registration logic
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,79 +181,31 @@ fun LoginScreen() {
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text("Login", fontSize = 16.sp)
+            Text("Submit", fontSize = 16.sp)
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Conditions et politique de confidentialité
+        Text(
+            text = "By registering you agree to our Terms & Conditions and Privacy Policy",
+            textAlign = TextAlign.Center,
+            fontSize = 12.sp,
+            color = Color.Gray,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Séparateur OR
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(
-                modifier = Modifier.weight(1f),
-                color = Color.Gray
-            )
-            Text(
-                text = "OR",
-                modifier = Modifier.padding(horizontal = 16.dp),
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
-            Divider(
-                modifier = Modifier.weight(1f),
-                color = Color.Gray
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Boutons Feedback et Google
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            OutlinedButton(
-                onClick = { /* TODO: Facebook */ },
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = "Facebook Logo",
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Facebook")
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            OutlinedButton(
-                onClick = { /* TODO: Google login */ },
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = "Google Logo",
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Google")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Ligne Register Now
+        // Lien pour se connecter
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text("Don't have an account? ")
-            TextButton(onClick = { /* TODO: Navigate to register */ }) {
+            Text("Already have an account? ")
+            TextButton(onClick = onLoginClick) {
                 Text(
-                    text = "Register Now",
+                    text = "Login",
                     color = MaterialTheme.colorScheme.primary
                 )
             }
