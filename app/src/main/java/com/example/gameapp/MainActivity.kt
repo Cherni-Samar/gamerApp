@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,20 +22,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            GameAppTheme {
+            var showSplash by remember { mutableStateOf(true) }
+
+            // Détection automatique du dark mode
+            GameAppTheme(darkTheme = isSystemInDarkTheme()) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
-                ) { // ← ICI
-                    // Contenu ici
-                } // ←
-                var showSplash by remember { mutableStateOf(true) }
-
-                if (showSplash) {
-                    SplashScreen { showSplash = false }
-                } else {
-                    LoginScreen() // ton écran de login
+                ) {
+                    if (showSplash) {
+                        SplashScreen { showSplash = false }
+                    } else {
+                        //LoginScreen()
+                        //RegisterScreen()
+                        //ForgotPasswordScreen()
+                        //VerificationScreen()
+                        ResetPasswordScreen()
+                    }
                 }
             }
         }
@@ -45,11 +52,13 @@ class MainActivity : ComponentActivity() {
 fun SplashScreen(onTimeout: () -> Unit) {
     LaunchedEffect(Unit) {
         delay(2000L) // 2 secondes
-        onTimeout()      // après le délai, passe au LoginScreen
+        onTimeout()  // après le délai, passe au LoginScreen
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Image(
