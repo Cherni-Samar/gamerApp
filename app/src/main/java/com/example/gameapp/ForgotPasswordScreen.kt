@@ -36,14 +36,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.gameapp.ui.theme.GameAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPasswordScreen(
-    onBackClick: () -> Unit = {},
-    onSubmitClick: () -> Unit = {},
-    onSendSMSClick: () -> Unit = {}
+    controller: NavHostController,
+    onBackClick: () -> Unit = {controller.navigate("login")},
+    onSubmitClick: () -> Unit = {controller.navigate("verificationPwd")},
+    onSendSMSClick: () -> Unit = {controller.navigate("verificationPwd")}
 ) {
     var emailOrPhone by remember { mutableStateOf("") }
     var isEmptyError by remember { mutableStateOf(false) }
@@ -173,10 +175,3 @@ fun ForgotPasswordScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ForgotPasswordScreenPreview() {
-    GameAppTheme {
-        ForgotPasswordScreen()
-    }
-}

@@ -20,13 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
+//@Preview
 fun RegisterScreen(
-    onLoginClick: () -> Unit = {}
-) {
+    controller: NavHostController)
+{
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -171,7 +172,7 @@ fun RegisterScreen(
                 confirmPasswordError = confirmPassword.isEmpty() || confirmPassword != password
 
                 if (!fullNameError && !emailError && !passwordError && !confirmPasswordError) {
-                    // TODO: Registration logic
+                    controller.navigate("login")
                 }
             },
             modifier = Modifier
@@ -203,7 +204,7 @@ fun RegisterScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             Text("Already have an account? ")
-            TextButton(onClick = onLoginClick) {
+            TextButton(onClick = {controller.navigate("login")}) {
                 Text(
                     text = "Login",
                     color = MaterialTheme.colorScheme.primary

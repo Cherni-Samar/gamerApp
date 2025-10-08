@@ -15,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.gameapp.ui.theme.GameAppTheme
 import kotlinx.coroutines.delay
 
@@ -35,11 +38,32 @@ class MainActivity : ComponentActivity() {
                     if (showSplash) {
                         SplashScreen { showSplash = false }
                     } else {
+                        val controller = rememberNavController()
+                        NavHost(navController = controller, startDestination = "login") {
+                            composable("login") {
+                                LoginScreen(controller)
+                            }
+                            // Écran d'inscription
+                            composable("register") {
+                                RegisterScreen(controller)
+                            }
+                            composable("forgotPwd") {
+                                ForgotPasswordScreen(controller)
+                            }
+                            composable("resetPwd") {
+                                ResetPasswordScreen(controller)
+                            }
+                            composable("verificationPwd") {
+                                VerificationScreen (controller)
+                            }
+                        }
+
+
                         //LoginScreen()
                         //RegisterScreen()
                         //ForgotPasswordScreen()
                         //VerificationScreen()
-                        ResetPasswordScreen()
+                        //ResetPasswordScreen()
                     }
                 }
             }

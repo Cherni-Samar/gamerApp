@@ -23,13 +23,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.gameapp.ui.theme.GameAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerificationScreen(
-    onBackClick: () -> Unit = {},
-    onVerifySuccess: () -> Unit = {}
+    controller: NavHostController,
+    onBackClick: () -> Unit = {controller.navigate("forgotPwd")},
+    onVerifySuccess: () -> Unit = {controller.navigate("resetPwd")}
 ) {
     var code by remember { mutableStateOf("") }
     var wrongCode by remember { mutableStateOf(false) }
@@ -234,10 +236,3 @@ fun CodeInputWithSquares(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun VerificationScreenPreview() {
-    GameAppTheme {
-        VerificationScreen()
-    }
-}

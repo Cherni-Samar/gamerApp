@@ -16,10 +16,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(controller: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf(false) }
@@ -99,7 +100,7 @@ fun LoginScreen() {
                 Text("Remember Me", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
             }
 
-            TextButton(onClick = { /* TODO */ }) {
+            TextButton(onClick = { controller.navigate("forgotPwd") }) {
                 Text("Forget password?", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -180,7 +181,7 @@ fun LoginScreen() {
             horizontalArrangement = Arrangement.Center
         ) {
             Text("Don't have an account? ", color = MaterialTheme.colorScheme.onBackground)
-            TextButton(onClick = { /* TODO */ }) {
+            TextButton(onClick = {controller.navigate("register") }) {
                 Text("Register Now", color = MaterialTheme.colorScheme.primary)
             }
         }

@@ -16,12 +16,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetPasswordScreen(
-    onBackClick: () -> Unit = {},
-    onSubmitClick: () -> Unit = {}
+    controller: NavHostController,
+    onBackClick: () -> Unit = {controller.navigate("verificationPwd")},
+    onSubmitClick: () -> Unit = {controller.navigate("login")}
 ) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
